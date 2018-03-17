@@ -1,28 +1,51 @@
 <template>
-  <div class="Register">
-    <h1>Register</h1>
-    <input type="email" v-model="email" name="email" placeholder="email" />
-    <br/>
-    <input type="password" v-model="password" name="password" placeholder="password" />
-    <button @click="register">Register</button>
-  </div>
-</template>
+    <v-layout column>
+      <v-flex xs6 offset-xs3>
+        <panel title="Register">
+          <form 
+            name="tab-tracker-form"
+            autocomplete="off">
+            <v-text-field
+              label="Email"
+              v-model="email"
+            ></v-text-field>
+            <br>
+            <v-text-field
+              label="Password"
+              type="password"
+              v-model="password"
+              autocomplete="new-password"
+            ></v-text-field>
+          </form>
+          <br>
+          <div class="danger-alert" v-html="error" />
+          <br>
+          <v-btn
+            dark
+            class="cyan"
+            @click="register">
+            Register
+          </v-btn>
+        </panel>
+      </v-flex>
+    </v-layout>
+  </template>
 
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
 
 export default {
-  name: 'HelloWorld',
   data () {
     return {
       email: '',
-      password: ''
+      password: '',
+      error: null
     }
   },
   methods: {
-    register () {
-      console.log(`Clicked ${this.email} ${this.password}`)
-      AuthenticationService.register({
+    async register () {
+/*      //Implemented using Promises
+        AuthenticationService.register({
         email: this.email,
         password: this.password
       })
@@ -33,7 +56,14 @@ export default {
       .catch(function (error) {
         console.log('Error occured');
         console.log(error);
-      })
+      }) */
+      try {
+        const response = await AuthenticationService.register({
+          email: this.email,
+          password: this.password});
+        } catch (error) {
+          this.error = error.response.data.error 
+        }
     }
   }
 }
@@ -41,5 +71,4 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 </style>
